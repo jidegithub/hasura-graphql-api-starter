@@ -1,16 +1,42 @@
 import React from 'react';
+import gql from 'graphql-tag';
+import { useQuery } from '@apollo/react-hooks';
 
 import Flip from './components/Flip';
-import initialData from './initialData';
+// import initialData from './initialData';
 import './styles.css';
+
+const CLASSES = gql`
+  query MyQuery {
+    class {
+      id
+      type
+      img
+      animals {
+        id
+        name
+      }
+    }
+  }
+`;
 
 export default function App() {
   const [flipped, flip] = React.useState('');
+  const {loading, error, data} = useQuery(CLASSES)
+
+  if(loading){
+    return <div>Loading</div>
+  }
+
+  if(error){
+    console.log(error)
+    return <div>Something went wrong</div>
+  }
 
   return (
     <div className="App">
       <main>
-        {initialData.map(classData => (
+        {data.class.map(classData => (
           <Flip
             key={classData.type}
             flip={() => {
